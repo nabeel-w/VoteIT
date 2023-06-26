@@ -23,7 +23,7 @@ Before running the code, make sure you have the following prerequisites:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/vote-system.git
+   git clone https://github.com/nabeel-w/VoteIT-API
 2. Install the dependencies:
    ```bash
      cd vote-system
