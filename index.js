@@ -5,8 +5,12 @@ const twilio = require('twilio');
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 const PORT=process.env.PORT || 5000;
+
 const app = express();
+const corsOptions = {origin: ['http://localhost:3000']};
+app.use(cors(corsOptions));
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -40,11 +44,11 @@ async function storeUser(name,phoneNumber,res){
             }  
         }
         await user.save();
-        res.sendStatus(201);          
+        res.status(200).json({message:'User Created'});          
         
     }catch(error){
         console.log('Error storing user:', error);
-        res.sendStatus(500);
+        res.status(500).json({message:'This number is already registred'});
     }
 }
 async function getName(phoneNumber){
@@ -104,9 +108,9 @@ app.post("/login",async function(req,res){
         //console.log(id);
         generateOTP(id,phoneNumber,res);
     })
-    .catch(err=>{
-        console.log("Error Found",err);
-        res.sendStatus(404);
+    .catch(error=>{
+        console.log(error);
+        res.status(404).json({ message:"Number Not Found" });
     })
 
 })
@@ -116,9 +120,9 @@ app.post("/verify",verifyToken,(req,res)=>{
     //console.log(id,OTP,inputOTP);
     bcrypt.compare(inputOTP, OTP)
     .then(result=>{
-        console.log(result);
+        //console.log(result);
         if(result){
-            console.log("Success");
+            //console.log("Success");
             res.sendStatus(200);
         }else{
             res.sendStatus(401)
@@ -126,6 +130,7 @@ app.post("/verify",verifyToken,(req,res)=>{
     })
 
 })
+app.post("/verifyToken",verifyToken,(req,res)=>{});
 
 
 app.listen(PORT, ()=> {console.log(`Server started on port ${PORT}.`)});
